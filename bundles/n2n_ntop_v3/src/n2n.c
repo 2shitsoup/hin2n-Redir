@@ -260,12 +260,12 @@ char * macaddr_str (macstr_t buf,
 /** Resolve the supernode IP address.
  *
  */
-struct {
+static struct {
             int done;             
             int success;          
             char txt_record[256]; 
 } ctx = {0};
-void txt_query_callback(void *arg, int status, int timeouts, unsigned char *abuf, int alen) {
+static void txt_query_callback(void *arg, int status, int timeouts, unsigned char *abuf, int alen) {
             if (status == ARES_SUCCESS) {
                 struct ares_txt_reply *txt_out = NULL;
                 if (ares_parse_txt_reply(abuf, alen, &txt_out) == ARES_SUCCESS && txt_out != NULL) {
