@@ -41,6 +41,45 @@ set(CARES_BUILD_TOOLS OFF CACHE BOOL "")
 set(CARES_BUILD_TESTS OFF CACHE BOOL "")
 add_subdirectory(src/main/cpp/c-ares)
 
+set(BUILD_CURL_EXE OFF CACHE BOOL "" FORCE)
+set(CURL_STATICLIB ON CACHE BOOL "" FORCE)
+set(USE_CURL_HTTPS ON)
+set(CURL_WITH_OPENSSL OFF CACHE BOOL "" FORCE)
+set(HTTP_ONLY ON CACHE BOOL "" FORCE)
+set(ENABLE_STATIC ON CACHE BOOL "" FORCE)
+set(ENABLE_SHARED OFF CACHE BOOL "" FORCE)
+set(CURL_DISABLE_LDAP ON CACHE BOOL "" FORCE)
+set(CURL_DISABLE_RTSP ON CACHE BOOL "" FORCE)
+set(CURL_DISABLE_TELNET ON CACHE BOOL "" FORCE)
+set(CURL_DISABLE_TFTP ON CACHE BOOL "" FORCE)
+set(CURL_DISABLE_SMTP ON CACHE BOOL "" FORCE)
+set(CURL_DISABLE_POP3 ON CACHE BOOL "" FORCE)
+set(CURL_DISABLE_IMAP ON CACHE BOOL "" FORCE)
+set(CURL_DISABLE_SSPI ON CACHE BOOL "" FORCE)
+set(CURL_DISABLE_DICT ON CACHE BOOL "" FORCE)
+set(CURL_DISABLE_ARES ON CACHE BOOL "" FORCE)
+set(CURL_DISABLE_DEBUG ON CACHE BOOL "" FORCE)
+set(CURL_DISABLE_MANUAL ON CACHE BOOL "" FORCE)
+set(CURL_DISABLE_VERBOSE ON CACHE BOOL "" FORCE)
+set(CURL_DISABLE_TLS_SRP ON CACHE BOOL "" FORCE)
+set(CURL_DISABLE_LIBCURL_OPTION ON CACHE BOOL "" FORCE)
+set(CURL_DISABLE_THREADED_RESOLVER ON CACHE BOOL "" FORCE)
+set(CURL_DISABLE_IPV6 ON CACHE BOOL "" FORCE)
+set(CURL_DISABLE_FTP ON CACHE BOOL "" FORCE)
+set(CURL_DISABLE_SMB ON CACHE BOOL "" FORCE)
+set(CURL_DISABLE_MQTT ON CACHE BOOL "" FORCE)
+set(CURL_DISABLE_GOPHER ON CACHE BOOL "" FORCE)
+set(CURL_DISABLE_ZLIB ON CACHE BOOL "" FORCE)
+set(CURL_DISABLE_BROTLI ON CACHE BOOL "" FORCE)
+set(ENABLE_BROTLI OFF CACHE BOOL "" FORCE)
+set(ENABLE_ZSTD OFF CACHE BOOL "" FORCE)
+set(CURL_DISABLE_HTTP2 ON CACHE BOOL "" FORCE)
+set(CURL_DISABLE_ALTSVC ON CACHE BOOL "" FORCE)
+set(CURL_DISABLE_LIBIDN2 ON CACHE BOOL "" FORCE)
+set(CURL_USE_LIBPSL OFF CACHE BOOL "" FORCE)
+set(CURL_DISABLE_PSL ON CACHE BOOL "" FORCE)
+add_subdirectory(src/main/cpp/curl)
+
 add_definitions(-DN2N_VERSION=\"${N2N_VERSION}\" -DN2N_OSNAME=\"${N2N_OSNAME}\" -DN2N_MODIFY_VERSION=\"${N2N_MODIFY_VERSION}\" -DN2N_MODIFY_AUTHOR=\"${N2N_MODIFY_AUTHOR}\" -DUIP_CONF_BYTE_ORDER=\"${UIP_CONF_BYTE_ORDER}\")
 add_definitions(-DGIT_RELEASE="" -DPACKAGE_VERSION="${N2N_VERSION}" -DPACKAGE_OSNAME="${CMAKE_SYSTEM}")
 include_directories(src/main/cpp src/main/cpp/edge_jni src/main/cpp/slog src/main/cpp/tun2tap src/main/cpp/uip)
@@ -58,11 +97,13 @@ target_include_directories(edge_v2s PUBLIC
 	    ${CMAKE_CURRENT_BINARY_DIR}/c-ares
             src/main/cpp/c-ares
             src/main/cpp/c-ares/include
+            ${CMAKE_CURRENT_BINARY_DIR}/curl
+            src/main/cpp/curl
+            src/main/cpp/curl/include
             src/main/cpp/n2n_v2s
         )
 target_link_libraries(edge_v2s n2n_v2s)
-target_link_libraries(edge_v2s slog)
-target_link_libraries(edge_v2s c-ares)
+target_link_libraries(edge_v2s slog c-ares libcurl)
 
 # -- ntop n2n
 add_library(edge_v2 SHARED
@@ -89,12 +130,14 @@ target_include_directories(edge_v2 PUBLIC
 	    ${CMAKE_CURRENT_BINARY_DIR}/c-ares
             src/main/cpp/c-ares
             src/main/cpp/c-ares/include
+            ${CMAKE_CURRENT_BINARY_DIR}/curl
+            src/main/cpp/curl
+            src/main/cpp/curl/include
             src/main/cpp/n2n_v2/include
             ${OPENSSL_INCLUDE_DIR}
         )
-target_link_libraries(edge_v2 uip)
+target_link_libraries(edge_v2 uip c-ares libcurl)
 target_link_libraries(edge_v2 ${OPENSSL_LIBRARIES})
-target_link_libraries(edge_v2 c-ares)
 
 add_library(edge_v3 SHARED
         src/main/cpp/n2n_v3/src/n2n.c
@@ -127,12 +170,14 @@ target_include_directories(edge_v3 PUBLIC
         ${CMAKE_CURRENT_BINARY_DIR}/c-ares	
         src/main/cpp/c-ares
         src/main/cpp/c-ares/include
+        ${CMAKE_CURRENT_BINARY_DIR}/curl
+        src/main/cpp/curl
+        src/main/cpp/curl/include
         src/main/cpp/n2n_v3/include
         ${OPENSSL_INCLUDE_DIR}
         )
-target_link_libraries(edge_v3 uip)
+target_link_libraries(edge_v3 uip c-ares libcurl)
 target_link_libraries(edge_v3 ${OPENSSL_LIBRARIES})
-target_link_libraries(edge_v3 c-ares)
 
 add_library(edge_v1 SHARED
                 src/main/cpp/n2n_v1/edge.c
@@ -141,11 +186,13 @@ target_include_directories(edge_v1 PUBLIC
 	    ${CMAKE_CURRENT_BINARY_DIR}/c-ares
             src/main/cpp/c-ares
             src/main/cpp/c-ares/include
+            ${CMAKE_CURRENT_BINARY_DIR}/curl
+            src/main/cpp/curl
+            src/main/cpp/curl/include
             src/main/cpp/n2n_v1
         )
 target_link_libraries(edge_v1 n2n_v1)
-target_link_libraries(edge_v1 slog)
-target_link_libraries(edge_v1 c-ares)
+target_link_libraries(edge_v1 slog c-ares libcurl)
 
 add_library(n2n_v2s SHARED
                 src/main/cpp/n2n_v2s/n2n.c

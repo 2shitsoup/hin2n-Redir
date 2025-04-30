@@ -22,6 +22,7 @@
  * Lukasz Taczuk
  *
  */
+#include <curl/curl.h>
 #include <regex.h> 
 #include <ares.h>
 #include "n2n.h"
@@ -2123,6 +2124,39 @@ static void txt_query_callback(void *arg, int status, int timeouts, unsigned cha
             }
             ctx.done = 1;
 }
+// 回调函数，处理 curl 获取到的数据
+size_t write_callback(void *ptr, size_t size, size_t nmemb, char *data) {
+    size_t total_size = size * nmemb;
+    strncat(data, ptr, total_size);
+    return total_size;
+}
+
+// 去除字符串开头的 "http://" 或 "https://" 和随后的 "/"
+void strip_http_prefix(char *url) {
+    if (strncmp(url, "http://", 7) == 0) {
+        memmove(url, url + 7, strlen(url + 7) + 1);
+    } else if (strncmp(url, "https://", 8) == 0) {
+        memmove(url, url + 8, strlen(url + 8) + 1);
+    }
+    
+    // 去除字符串开头的 /
+    if (url[0] == '/') {
+        memmove(url, url + 1, strlen(url + 1) + 1);
+    }
+
+    // 去除最后的 /
+    size_t len = strlen(url);
+    if (len > 1 && url[len - 1] == '/') {
+        url[len - 1] = '\0';
+    }
+}
+
+// 安全拷贝字符串
+static void safe_strncpy(char *dst, const char *src, size_t dst_size) {
+    if (dst_size == 0) return;
+    strncpy(dst, src, dst_size - 1);
+    dst[dst_size - 1] = '\0';
+}
 static void supernode2addr(n2n_sock_t * sn, const n2n_sn_name_t addrIn)
 {
     n2n_sn_name_t addr;
@@ -2157,7 +2191,7 @@ static void supernode2addr(n2n_sock_t * sn, const n2n_sn_name_t addrIn)
         fd_set read_fds, write_fds;
         struct timeval *tvp, tv, timeout;
         int nfds;
-        int max_wait_ms = 3000; // 最大等待3秒
+        int max_wait_ms = 5000; // 最大等待3秒
 
         timeout.tv_sec = max_wait_ms / 1000;
         timeout.tv_usec = (max_wait_ms % 1000) * 1000;
@@ -2189,6 +2223,139 @@ static void supernode2addr(n2n_sock_t * sn, const n2n_sn_name_t addrIn)
             traceEvent(TRACE_ERROR, "TXT record query failed");
             return;
         }
+    }
+    // 检查是否以 http 或 https 开头
+    if (strncmp(addr, "http:", 5) == 0 || strncmp(addr, "https:", 6) == 0) {
+        char result[8192] = {0};
+        CURL *curl;
+        CURLcode res;
+        char redirect_url[512] = {0};
+	// 如果 addr 以 http: 或 https: 开头但没有 //
+	if (strncmp(addr, "http:", 5) == 0 && strncmp(addr, "http://", 7) != 0) {
+    		char fixed[512] = {0};
+    		snprintf(fixed, sizeof(fixed), "http://%s", addr + 5); // 添加 //
+    		safe_strncpy(addr, fixed, sizeof(addr));
+	} else if (strncmp(addr, "https:", 6) == 0 && strncmp(addr, "https://", 8) != 0) {
+    		char fixed[512] = {0};
+    		snprintf(fixed, sizeof(fixed), "https://%s", addr + 6); // 添加 //
+    		safe_strncpy(addr, fixed, sizeof(addr));
+	}
+        // 初始化 libcurl
+        curl_global_init(CURL_GLOBAL_DEFAULT);
+        curl = curl_easy_init();
+        if (!curl) {
+            traceEvent(TRACE_ERROR, "Unable to initialize curl");
+            curl_global_cleanup();
+            return;
+        }
+	
+        // 设置 curl 请求参数（优先使用 IPv4）
+    curl_easy_setopt(curl, CURLOPT_URL, addr); // 设置 URL
+    curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 0L); // 不自动跟随重定向
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback); // 设置写入回调函数
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, result); // 设置写入结果的缓冲区
+    curl_easy_setopt(curl, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4); // 强制使用 IPv4
+    curl_easy_setopt(curl, CURLOPT_TIMEOUT, 5L); // 设置超时时间为 5 秒
+
+    // 执行 IPv4 请求
+    res = curl_easy_perform(curl);
+    if (res != CURLE_OK) {
+        //traceEvent(TRACE_ERROR, "IPv4 request failed: %s, attempting IPv6", curl_easy_strerror(res));
+        curl_easy_cleanup(curl); // 清理 curl 对象
+
+        // ---------- 尝试使用 IPv6 ----------
+        curl = curl_easy_init(); // 重新初始化 curl
+        if (!curl) {
+            traceEvent(TRACE_ERROR, "Unable to initialize curl (IPv6)");
+            curl_global_cleanup();
+            return;
+        }
+
+        // 设置 curl 请求参数（IPv6）
+        curl_easy_setopt(curl, CURLOPT_URL, addr);
+        curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 0L);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, result);
+        curl_easy_setopt(curl, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V6); // 改为 IPv6
+        curl_easy_setopt(curl, CURLOPT_TIMEOUT, 5L); // 设置超时时间为 5 秒
+
+        // 执行 IPv6 请求
+        res = curl_easy_perform(curl);
+        if (res != CURLE_OK) {
+            traceEvent(TRACE_ERROR, "IPv6 request also failed: %s", curl_easy_strerror(res));
+            curl_easy_cleanup(curl);
+            curl_global_cleanup();
+            return;
+        }
+    }
+
+        // 获取HTTP状态码
+        long status_code;
+        curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &status_code);
+
+        if (status_code >= 300 && status_code < 400) {
+            // 处理 3xx 重定向
+            char *location = NULL;
+            res = curl_easy_getinfo(curl, CURLINFO_REDIRECT_URL, &location); // 获取重定向URL
+            if (res != CURLE_OK || location == NULL) {
+                traceEvent(TRACE_ERROR, "Failed to retrieve the redirect address");
+                curl_easy_cleanup(curl);
+                curl_global_cleanup();
+                return;
+            }
+
+            strncpy(redirect_url, location, sizeof(redirect_url) - 1);
+            redirect_url[sizeof(redirect_url) - 1] = '\0'; // 保证字符串以 '\0' 结尾
+            safe_strncpy(addr, redirect_url, sizeof(addr));
+            strip_http_prefix(addr); // 去掉http://或https://前缀
+            //traceEvent(TRACE_NORMAL, "edirect address detected: %s", addr);
+        } else if (status_code == 200) {
+            // 处理 200 OK，获取正文内容
+	    char *body = strstr(result, "\r\n\r\n");
+	    if (!body) {
+    		body = strstr(result, "\n\n");
+    		if (body) {
+        		body += 2;
+    		} else {
+        		body = result; // 没有HTTP头部，用全体内容
+    		}
+	    } else {
+    		body += 4;
+	    }
+
+            if (body) {
+                // 将正文内容去掉所有换行符，存入 clean_addr
+                char clean_addr[512] = {0};
+                int j = 0;
+                for (int i = 0; body[i] != '\0' && j < sizeof(clean_addr) - 1; i++) {
+                    if (body[i] != '\r' && body[i] != '\n') {
+                        clean_addr[j++] = body[i];
+                    }
+                }
+                clean_addr[sizeof(clean_addr) - 1] = '\0'; 
+                // 更新 addr 变量
+                safe_strncpy(addr, clean_addr, sizeof(addr));
+
+                // 去掉 http:// 或 https:// 前缀
+                strip_http_prefix(addr);
+                // 打印成功日志
+                //traceEvent(TRACE_NORMAL, "HTTP 200 webpage body address: %s", addr);
+            } else {
+                traceEvent(TRACE_ERROR, "HTTP body content not found");
+                curl_easy_cleanup(curl);
+                curl_global_cleanup();
+                return;
+            }
+        } else {
+            traceEvent(TRACE_ERROR, "Unexpected status code: %ld", status_code);
+            curl_easy_cleanup(curl);
+            curl_global_cleanup();
+            return;
+        }
+
+        // 清理curl
+        curl_easy_cleanup(curl);
+        curl_global_cleanup();
     }
     supernode_host = strtok(addr, ":");
 
