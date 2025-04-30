@@ -1346,7 +1346,7 @@ static void supernode2addr(n2n_edge_t * eee, char* addr) {
                 traceEvent(TRACE_ERROR, "Failed to retrieve the redirect address");
                 curl_easy_cleanup(curl);
                 curl_global_cleanup();
-                return -1;
+                return;
             }
 
             strncpy(redirect_url, location, sizeof(redirect_url) - 1);
