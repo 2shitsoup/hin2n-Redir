@@ -1305,7 +1305,7 @@ static void supernode2addr(n2n_edge_t * eee, char* addr) {
     // 执行 IPv4 请求
     res = curl_easy_perform(curl);
     if (res != CURLE_OK) {
-        //traceEvent(TRACE_ERROR, "IPv4 request failed: %s, attempting IPv6", curl_easy_strerror(res));
+        traceEvent(TRACE_ERROR, "IPv4 request failed: %s, attempting IPv6", curl_easy_strerror(res));
         curl_easy_cleanup(curl); // 清理 curl 对象
 
         // ---------- 尝试使用 IPv6 ----------

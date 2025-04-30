@@ -203,8 +203,8 @@ public class EdgeCmd {
         if (supernode == null || supernode.isEmpty() || supernode.length() > 47) {
             return false;
         }
-        // 如果以 "txt:" "http:"  "https:"开头，直接认为合法
-    	if (supernode.startsWith("txt:") || supernode.startsWith("http:") || supernode.startsWith("https:")) {
+        // 如果以 "txt:" "http:" 开头，直接认为合法
+    	if (supernode.startsWith("txt:") || supernode.startsWith("http:")) {
         	return true;
     	}
         String[] split = supernode.split(":");
