@@ -420,7 +420,7 @@ cmake_dependent_option(CURL_USE_BEARSSL "Enable BearSSL for SSL/TLS" OFF CURL_EN
 cmake_dependent_option(CURL_USE_WOLFSSL "Enable wolfSSL for SSL/TLS" OFF CURL_ENABLE_SSL OFF)
 cmake_dependent_option(CURL_USE_GNUTLS "Enable GnuTLS for SSL/TLS" OFF CURL_ENABLE_SSL OFF)
 
-set(openssl_default ON)
+set(openssl_default OFF)
 if(WIN32 OR CURL_USE_SECTRANSP OR CURL_USE_SCHANNEL OR CURL_USE_MBEDTLS OR CURL_USE_WOLFSSL)
   set(openssl_default OFF)
 endif()
@@ -440,9 +440,9 @@ if(enabled_ssl_options_count GREATER "1")
 endif()
 
 if(CURL_USE_SCHANNEL)
-  set(SSL_ENABLED ON)
-  set(USE_SCHANNEL ON) # Windows native SSL/TLS support
-  set(USE_WINDOWS_SSPI ON) # CURL_USE_SCHANNEL implies CURL_WINDOWS_SSPI
+  set(SSL_ENABLED OFF)
+  set(USE_SCHANNEL OFF) # Windows native SSL/TLS support
+  set(USE_WINDOWS_SSPI OFF) # CURL_USE_SCHANNEL implies CURL_WINDOWS_SSPI
 
   if(CURL_DEFAULT_SSL_BACKEND AND CURL_DEFAULT_SSL_BACKEND STREQUAL "schannel")
     set(valid_default_ssl_backend TRUE)
@@ -485,8 +485,8 @@ endif()
 
 if(CURL_USE_OPENSSL)
   find_package(OpenSSL REQUIRED)
-  set(SSL_ENABLED ON)
-  set(USE_OPENSSL ON)
+  set(SSL_ENABLED FF)
+  set(USE_OPENSSL FF)
 
   # Depend on OpenSSL via imported targets if supported by the running
   # version of CMake.  This allows our dependents to get our dependencies
@@ -513,8 +513,8 @@ endif()
 
 if(CURL_USE_MBEDTLS)
   find_package(MbedTLS REQUIRED)
-  set(SSL_ENABLED ON)
-  set(USE_MBEDTLS ON)
+  set(SSL_ENABLED OFF)
+  set(USE_MBEDTLS OFF)
   list(APPEND CURL_LIBS ${MBEDTLS_LIBRARIES})
   include_directories(${MBEDTLS_INCLUDE_DIRS})
 
@@ -525,8 +525,8 @@ endif()
 
 if(CURL_USE_BEARSSL)
   find_package(BearSSL REQUIRED)
-  set(SSL_ENABLED ON)
-  set(USE_BEARSSL ON)
+  set(SSL_ENABLED OFF)
+  set(USE_BEARSSL OFF)
   list(APPEND CURL_LIBS ${BEARSSL_LIBRARY})
   include_directories(${BEARSSL_INCLUDE_DIRS})
 
@@ -537,8 +537,8 @@ endif()
 
 if(CURL_USE_WOLFSSL)
   find_package(WolfSSL REQUIRED)
-  set(SSL_ENABLED ON)
-  set(USE_WOLFSSL ON)
+  set(SSL_ENABLED OFF)
+  set(USE_WOLFSSL OFF)
   list(APPEND CURL_LIBS ${WolfSSL_LIBRARIES})
   include_directories(${WolfSSL_INCLUDE_DIRS})
 
@@ -549,8 +549,8 @@ endif()
 
 if(CURL_USE_GNUTLS)
   find_package(GnuTLS REQUIRED)
-  set(SSL_ENABLED ON)
-  set(USE_GNUTLS ON)
+  set(SSL_ENABLED OFF)
+  set(USE_GNUTLS OFF)
   list(APPEND CURL_LIBS ${GNUTLS_LIBRARIES} "nettle")
   include_directories(${GNUTLS_INCLUDE_DIRS})
 
