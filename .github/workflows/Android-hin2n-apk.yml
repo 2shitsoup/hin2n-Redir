@@ -1,0 +1,52 @@
+name: 编译android-hin2n
+
+on:
+  push:
+  workflow_dispatch:
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+env:
+  TZ: Asia/Shanghai
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: 下载工具链
+        run: |
+          #下载jdk sdk ndk工具链
+          wget -c -q https://github.com/lmq8267/n2n-2.8.x/releases/download/toolchain/hin2n_byhj.tar.gz -P /opt/gcc/
+          tar -xf /opt/gcc/hin2n_byhj.tar.gz -C /opt/gcc/
+      - name: 构建 APK
+        run: |
+         cd Hin2n_android
+         #设置编译环境
+         sudo timedatectl set-timezone "Asia/Shanghai"
+         #sudo apt-get install git automake libssl-dev make gcc
+         export JAVA_HOME=/opt/gcc/java/jdk1.8.0_202
+         export JRE_HOME=/opt/gcc/java/jdk1.8.0_202/jre
+         export CLASSPATH=.:$JAVA_HOME/lib:$JRE_HOME/lib:$CLASSPATH
+         export PATH=$JAVA_HOME/bin:$JRE_HOME/bin:$PATH
+         export ANDROID_HOME=/opt/gcc/Android/sdk
+         export ANDROID_NDK_HOME=$ANDROID_HOME/ndk-bundle
+         rm -rf app/Hin2n.jks
+         keytool -genkeypair -v -keystore app/Hin2n.jks -alias Hin2n -keyalg RSA -keysize 2048 -validity 36135 -storepass My-Hin2n -keypass My-Hin2n -dname "CN=Hin2n, OU=Dev, O=Switchy Inc, L=Beijing, S=Beijing, C=CN"
+         ./gradlew assembleRelease
+         
+      - name: 打包hin2n
+        run: |
+         mkdir -p /opt/hin2n
+         # 查找并移动 APK 文件
+         find ./Hin2n_android -type f -name "*.apk" || true
+         find ./Hin2n_android -type f -name "*.apk" -exec mv {} /opt/hin2n/ \;
+         zip -r hin2n-android.zip /opt/hin2n
+      - name : 上传
+        uses: actions/upload-artifact@master
+        if: always()
+        with:
+         name: n2n
+         path: /opt/hin2n

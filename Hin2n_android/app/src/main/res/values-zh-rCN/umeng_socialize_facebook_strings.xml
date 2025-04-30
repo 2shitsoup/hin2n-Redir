@@ -1,0 +1,7 @@
+<resources>
+
+ <string name="com_facebook_dialogloginactivity_ok_button">确定</string>
+    <string name="com_facebook_requesterror_password_changed">您的 Facebook 账户密码已变更，请重新登录本应用以完成账户重连。</string>
+    <string name="com_facebook_requesterror_reconnect">请重新登录本应用以恢复与 Facebook 账户的连接。</string>
+    <string name="com_facebook_requesterror_permissions">当前应用缺少必要权限。如需修改权限配置，请尝试重新登录本应用。</string>
+</resources>

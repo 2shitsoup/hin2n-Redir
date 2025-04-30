@@ -40,5 +40,43 @@
     <string name="trace_level_normal">NORMAL</string>
     <string name="trace_level_info">INFO</string>
     <string name="trace_level_debug">DEBUG</string>
+    
+    <string name="setting_name">Setting name</string>
+    <string name="n2n_version">N2N version</string> 
+    <string name="supernode">Supernode</string> 
+    <string name="community">Community</string> 
+    <string name="encrypt_key">Encrypt key</string> 
+    <string name="get_ip_from_supernode">Get IP from supernode</string> 
+    <string name="ip_address">IP address</string> 
+    <string name="subnet_mask">Subnet mask</string> 
+    <string name="device_description">Device Description</string> 
+    <string name="more_settings">More settings</string> 
+    <string name="encryption_method">Encryption method</string> 
+    <string name="supernode_2">Supernode 2</string> 
+    <string name="hole_punch_interval">Hole-punch interval(s)</string> 
+    <string name="local_ip">Local IP</string> 
+    <string name="automatically_detect_local_ip">Automatically detect local IP</string> 
+    <string name="local_port">Local port</string> 
+    <string name="gateway_ip_address">Gateway IP address</string> 
+    <string name="dns_server_ip_address">DNS server IP address</string> 
+    <string name="mac_address">Mac address</string> 
+    <string name="supernodes_are_running_dynamic_ips">Supernodes are running dynamic IPs</string> 
+    <string name="enable_packet_forwarding">Enable packet forwarding</string> 
+    <string name="accept_multicast_mac_addresses">Accept multicast MAC addresses</string> 
+    <string name="enable_full_header_encryption">Enable full header encryption</string> 
+    <string name="use_http_tunnel">Use http tunnel</string> 
+    <string name="trace_level">Trace level : </string> 
+    <string name="save">Save</string> 
+    <string name="current_setting">Current Setting : </string> 
+    <string name="choose_setting">choose setting</string> 
+    <string name="start_service_at_boot">Start service at boot</string> 
+    <string name="share">Share</string> 
+    <string name="contact_us">Contact us</string> 
+    <string name="feedback">Feedback</string> 
+    <string name="check_update">Check update</string> 
+    <string name="about">About</string> 
+    <string name="settingname">SettingName</string> 
+    <string name="disconnect_from_the_supernode.">Note: Disconnect from the supernode.</string> 
+    <string name="start">Start</string> 
 
 </resources>

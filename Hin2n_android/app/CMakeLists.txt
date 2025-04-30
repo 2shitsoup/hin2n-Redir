@@ -1,6 +1,6 @@
-project(Hin2n)
 cmake_minimum_required(VERSION 3.4.1)
-
+project(Hin2n)
+SET(CMAKE_VERBOSE_MAKEFILE ON)
 # N2n information
 set(N2N_VERSION 2.9.0)
 set(N2N_OSNAME ${CMAKE_SYSTEM})
@@ -34,6 +34,13 @@ set(CMAKE_BUILD_TYPE Release)
 endif(CMAKE_BUILD_TYPE)
 add_definitions(-DCMAKE_BUILD)
 
+set(CARES_STATIC ON CACHE BOOL "Build static c-ares library")
+set(CARES_SHARED OFF CACHE BOOL "Do not build shared c-ares library")
+set(CARES_INSTALL OFF CACHE BOOL "")
+set(CARES_BUILD_TOOLS OFF CACHE BOOL "")
+set(CARES_BUILD_TESTS OFF CACHE BOOL "")
+add_subdirectory(src/main/cpp/c-ares)
+
 add_definitions(-DN2N_VERSION=\"${N2N_VERSION}\" -DN2N_OSNAME=\"${N2N_OSNAME}\" -DN2N_MODIFY_VERSION=\"${N2N_MODIFY_VERSION}\" -DN2N_MODIFY_AUTHOR=\"${N2N_MODIFY_AUTHOR}\" -DUIP_CONF_BYTE_ORDER=\"${UIP_CONF_BYTE_ORDER}\")
 add_definitions(-DGIT_RELEASE="" -DPACKAGE_VERSION="${N2N_VERSION}" -DPACKAGE_OSNAME="${CMAKE_SYSTEM}")
 include_directories(src/main/cpp src/main/cpp/edge_jni src/main/cpp/slog src/main/cpp/tun2tap src/main/cpp/uip)
@@ -47,8 +54,15 @@ target_link_libraries(edge_jni slog)
 target_link_libraries(edge_jni ${OPENSSL_LIBRARIES})
 
 add_library(edge_v2s SHARED src/main/cpp/n2n_v2s/edge.c)
+target_include_directories(edge_v2s PUBLIC
+	    ${CMAKE_CURRENT_BINARY_DIR}/c-ares
+            src/main/cpp/c-ares
+            src/main/cpp/c-ares/include
+            src/main/cpp/n2n_v2s
+        )
 target_link_libraries(edge_v2s n2n_v2s)
 target_link_libraries(edge_v2s slog)
+target_link_libraries(edge_v2s c-ares)
 
 # -- ntop n2n
 add_library(edge_v2 SHARED
@@ -72,11 +86,15 @@ add_library(edge_v2 SHARED
         )
 target_compile_definitions(edge_v2 PUBLIC N2N_HAVE_AES HAVE_OPENSSL_1_1)
 target_include_directories(edge_v2 PUBLIC
+	    ${CMAKE_CURRENT_BINARY_DIR}/c-ares
+            src/main/cpp/c-ares
+            src/main/cpp/c-ares/include
             src/main/cpp/n2n_v2/include
             ${OPENSSL_INCLUDE_DIR}
         )
 target_link_libraries(edge_v2 uip)
 target_link_libraries(edge_v2 ${OPENSSL_LIBRARIES})
+target_link_libraries(edge_v2 c-ares)
 
 add_library(edge_v3 SHARED
         src/main/cpp/n2n_v3/src/n2n.c
@@ -106,17 +124,28 @@ add_library(edge_v3 SHARED
 target_compile_definitions(edge_v3 PUBLIC N2N_HAVE_AES HAVE_OPENSSL_1_1)
 target_compile_options(edge_v3 PRIVATE -DN2N_V3)
 target_include_directories(edge_v3 PUBLIC
+        ${CMAKE_CURRENT_BINARY_DIR}/c-ares	
+        src/main/cpp/c-ares
+        src/main/cpp/c-ares/include
         src/main/cpp/n2n_v3/include
         ${OPENSSL_INCLUDE_DIR}
         )
 target_link_libraries(edge_v3 uip)
 target_link_libraries(edge_v3 ${OPENSSL_LIBRARIES})
+target_link_libraries(edge_v3 c-ares)
 
 add_library(edge_v1 SHARED
                 src/main/cpp/n2n_v1/edge.c
             )
+target_include_directories(edge_v1 PUBLIC
+	    ${CMAKE_CURRENT_BINARY_DIR}/c-ares
+            src/main/cpp/c-ares
+            src/main/cpp/c-ares/include
+            src/main/cpp/n2n_v1
+        )
 target_link_libraries(edge_v1 n2n_v1)
 target_link_libraries(edge_v1 slog)
+target_link_libraries(edge_v1 c-ares)
 
 add_library(n2n_v2s SHARED
                 src/main/cpp/n2n_v2s/n2n.c
@@ -142,6 +171,7 @@ add_library(n2n_v1 SHARED
             )
 target_link_libraries(n2n_v1 uip)
 target_link_libraries(n2n_v1 slog)
+
 
 add_library(uip SHARED
                 src/main/cpp/uip/uip.c

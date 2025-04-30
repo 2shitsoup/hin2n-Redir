@@ -203,6 +203,10 @@ public class EdgeCmd {
         if (supernode == null || supernode.isEmpty() || supernode.length() > 47) {
             return false;
         }
+        // 如果以 "txt:" 开头，直接认为合法
+    	if (supernode.startsWith("txt:")) {
+        	return true;
+    	}
         String[] split = supernode.split(":");
         if (split == null || split.length != 2 || split[0].isEmpty()) {
             return false;

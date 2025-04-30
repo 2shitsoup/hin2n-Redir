@@ -47,7 +47,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:text="Current Setting : "
+                    android:text="@string/current_setting"
                     android:textSize="18sp" />
 
                 <RelativeLayout
@@ -64,7 +64,7 @@
                         android:layout_marginLeft="10dp"
                         android:paddingTop="10dp"
                         android:paddingBottom="10dp"
-                        android:text="--choose setting--"
+                        android:text="@string/choose_setting"
                         android:textSize="18sp" />
 
                     <ImageView
@@ -81,7 +81,7 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/rl_current_setting_item"
                     android:layout_centerHorizontal="true"
-                    android:text="Start service at boot" />
+                    android:text="@string/start_service_at_boot" />
 
             </RelativeLayout>
 
@@ -193,7 +193,7 @@
                         android:layout_centerVertical="true"
                         android:layout_marginLeft="10dp"
                         android:layout_toRightOf="@id/item_icon_share"
-                        android:text="Share"
+                        android:text="@string/share"
                         android:textColor="@android:color/black"
                         android:textSize="18dp"/>
             </RelativeLayout>
@@ -226,7 +226,7 @@
                         android:layout_centerVertical="true"
                         android:layout_marginLeft="10dp"
                         android:layout_toRightOf="@id/item_icon_contact"
-                        android:text="Contact us"
+                        android:text="@string/contact_us"
                         android:textColor="@android:color/black"
                         android:ellipsize="end"
                         android:textSize="18dp"/>
@@ -256,7 +256,7 @@
                         android:layout_centerVertical="true"
                         android:layout_marginLeft="10dp"
                         android:layout_toRightOf="@id/item_icon_feedback"
-                        android:text="Feedback"
+                        android:text="@string/feedback"
                         android:textColor="@android:color/black"
                         android:ellipsize="end"
                         android:textSize="18dp"/>
@@ -286,7 +286,7 @@
                         android:layout_centerVertical="true"
                         android:layout_marginLeft="10dp"
                         android:layout_toRightOf="@id/item_icon_update"
-                        android:text="Check update"
+                        android:text="@string/check_update"
                         android:textColor="@android:color/black"
                         android:textSize="18dp"/>
             </RelativeLayout>
@@ -314,7 +314,7 @@
                         android:layout_centerVertical="true"
                         android:layout_marginLeft="10dp"
                         android:layout_toRightOf="@id/item_icon_about"
-                        android:text="About"
+                        android:text="@string/about"
                         android:textColor="@android:color/black"
                         android:textSize="18dp"/>
             </RelativeLayout>

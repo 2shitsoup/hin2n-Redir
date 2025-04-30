@@ -24,7 +24,7 @@
                 android:id="@+id/til_setting_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Setting name">
+                android:hint="@string/setting_name">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/tie_setting_name"
@@ -43,7 +43,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="N2N version"/>
+                    android:text="@string/n2n_version"/>
                 <RadioGroup
                     android:id="@+id/rg_version"
                     android:layout_width="match_parent"
@@ -80,7 +80,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/ll_n2n_version"
-                android:hint="Supernode">
+                android:hint="@string/supernode">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/tie_super_node"
@@ -96,7 +96,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/til_super_node"
-                android:hint="Community">
+                android:hint="@string/community">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/tie_community"
@@ -111,7 +111,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/til_community"
-                android:hint="Encrypt key">
+                android:hint="@string/encrypt_key">
                 <!--app:passwordToggleEnabled="true"-->
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -140,7 +140,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_toRightOf="@id/get_ip_from_supernode_check_box"
-                    android:text="Get IP from supernode"/>
+                    android:text="@string/get_ip_from_supernode"/>
             </RelativeLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -149,7 +149,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/rl_get_ip_from_supernode"
-                android:hint="IP address">
+                android:hint="@string/ip_address">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/tie_ip_address"
@@ -164,7 +164,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/til_ip_address"
-                android:hint="Subnet mask">
+                android:hint="@string/subnet_mask">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/tie_net_mask"
@@ -180,7 +180,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/til_net_mask"
-                android:hint="Device Description">
+                android:hint="@string/device_description">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/tie_dev_desc"
@@ -206,7 +206,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_toRightOf="@id/more_setting_check_box"
-                    android:text="More settings"/>
+                    android:text="@string/more_settings"/>
             </RelativeLayout>
 
             <RelativeLayout
@@ -222,12 +222,12 @@
                     android:layout_marginTop="5dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Encryption method">
+                    android:hint="@string/encryption_method">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Encryption method"/>
+                        android:text="@string/encryption_method"/>
 
                     <Spinner
                         android:id="@+id/til_encryption_mode"
@@ -241,7 +241,7 @@
                     android:id="@+id/til_super_node_2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Supernode 2">
+                    android:hint="@string/supernode_2">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/tie_super_node_2"
@@ -271,7 +271,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/til_mtu"
-                    android:hint="Hole-punch interval">
+                    android:hint="@string/hole_punch_interval">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/tie_hole_punch_interval"
@@ -286,7 +286,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/til_hole_punch_Interval"
-                    android:hint="Local IP">
+                    android:hint="@string/local_ip">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/tie_local_ip"
@@ -301,7 +301,7 @@
                     android:id="@+id/check_box_local_ip"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Automatically detect local IP"/>
+                    android:text="@string/automatically_detect_local_ip"/>
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_marginTop="5dp"
@@ -309,7 +309,7 @@
                     android:id="@+id/til_local_port"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Local port">
+                    android:hint="@string/local_port">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/tie_local_port"
@@ -324,7 +324,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/til_local_port"
-                    android:hint="Gateway IP address">
+                    android:hint="@string/gateway_ip_address">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/tie_gateway_ip"
@@ -339,7 +339,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/til_gateway_ip"
-                    android:hint="DNS server IP address">
+                    android:hint="@string/dns_server_ip_address">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/tie_dns_server_ip"
@@ -354,7 +354,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/til_dns_server_ip"
-                    android:hint="Mac address">
+                    android:hint="@string/mac_address">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/tie_mac_addr"
@@ -383,7 +383,7 @@
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:layout_toRightOf="@id/resove_super_node_ip_check_box"
-                        android:text="Supernodes are running dynamic IPs"/>
+                        android:text="@string/supernodes_are_running_dynamic_ips"/>
                 </RelativeLayout>
 
 
@@ -405,7 +405,7 @@
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:layout_toRightOf="@id/allow_routing_check_box"
-                        android:text="Enable packet forwarding"/>
+                        android:text="@string/enable_packet_forwarding"/>
                 </RelativeLayout>
 
                 <!--boolean-->
@@ -426,7 +426,7 @@
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:layout_toRightOf="@id/accept_muticast_check_box"
-                        android:text="Accept multicast MAC addresses"/>
+                        android:text="@string/accept_multicast_mac_addresses"/>
                 </RelativeLayout>
 
                 <!--boolean-->
@@ -447,7 +447,7 @@
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:layout_toRightOf="@id/header_enc_check_box"
-                        android:text="Enable full header encryption"/>
+                        android:text="@string/enable_full_header_encryption"/>
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -468,7 +468,7 @@
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:layout_toRightOf="@id/use_http_tunnel_check_box"
-                        android:text="Use http tunnel"/>
+                        android:text="@string/use_http_tunnel"/>
                 </RelativeLayout>
                 <RelativeLayout
                     android:layout_marginTop="5dp"
@@ -481,7 +481,7 @@
                         android:id="@+id/tv_trace_level"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Trace level : "/>
+                        android:text="@string/trace_level"/>
 
                     <Spinner
                         android:layout_toRightOf="@id/tv_trace_level"
@@ -503,7 +503,7 @@
                     android:id="@+id/btn_save"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="save"/>
+                    android:text="@string/save"/>
 
                 <LinearLayout
                     android:id="@+id/ll_buttons"
@@ -512,7 +512,7 @@
                     android:layout_height="wrap_content">
                     <Button
                         android:id="@+id/btn_modify"
-                        android:text="save"
+                        android:text="@string/save"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"/>
                     <!--<Button-->

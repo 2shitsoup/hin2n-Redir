@@ -1,1 +1,7 @@
 include ':app'
+include ':swipemenulistview', ':AVLoadingIndicatorView', ':AndPermission'
+
+// 模块的路径
+project(':swipemenulistview').projectDir = new File('libs/swipemenulistview')
+project(':AVLoadingIndicatorView').projectDir = new File('libs/AVLoadingIndicatorView')
+project(':AndPermission').projectDir = new File('libs/AndPermission')
