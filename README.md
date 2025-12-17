@@ -1,6 +1,9 @@
 # Hin2n <img height="24" src="doc/pic/logo.png">
 
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/lmq8267/hin2n-Redir)
+
 [README](README.md) | [中文文档](README_zh.md)
+
 
 N2N is a VPN project that supports p2p. It was originally developed and open sourced by `Luca Deri` <deri@ntop.org>, `Richard Andrews` <andrews@ntop.org> of ntop.org, and `Meyerd` <https://github.com/meyerd> continues to do optimization work. Our goal is to provide **mobile version** support.
 
