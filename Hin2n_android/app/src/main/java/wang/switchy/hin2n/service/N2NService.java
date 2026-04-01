@@ -49,6 +49,9 @@ public class N2NService extends VpnService {
     private ParcelFileDescriptor mParcelFileDescriptor = null;
     private EdgeCmd cmd;
     N2NSettingInfo mN2nSettingInfo = null;
+    private String mAssignedIp = "";
+    private int mAssignedPrefixLength = -1;
+    private String mLastLoggedAssignedIp = "";
 
     private EdgeStatus.RunningStatus mLastStatus = DISCONNECT;
     private EdgeStatus.RunningStatus mCurrentStatus = DISCONNECT;
@@ -68,11 +71,13 @@ public class N2NService extends VpnService {
     }
 
     public int EstablishVpnService(String ip, int mask) {
+        mAssignedIp = ip;
+        mAssignedPrefixLength = mask;
 
         Builder builder = new Builder()
                 .setMtu(mN2nSettingInfo.getMtu())
                 .addAddress(ip, mask)
-                .addRoute(getRoute(mN2nSettingInfo.getIp(), mask), mask);
+                .addRoute(getRoute(ip, mask), mask);
 
         if (!mN2nSettingInfo.getGatewayIp().isEmpty()) {
             /* Route all the internet traffic via n2n. Most specific routes "win" over the system default gateway.
@@ -102,7 +107,29 @@ public class N2NService extends VpnService {
             return -1;
         }
 
+        logAssignedIpIfPossible();
+
         return mParcelFileDescriptor.detachFd();
+    }
+
+    private void logAssignedIpIfPossible() {
+        if (cmd == null || cmd.logPath == null || cmd.logPath.isEmpty()) {
+            return;
+        }
+        if (mAssignedIp == null || mAssignedIp.isEmpty()) {
+            return;
+        }
+        StringBuilder messageBuilder = new StringBuilder("Assigned N2N IP: ").append(mAssignedIp);
+        if (mAssignedPrefixLength >= 0) {
+            messageBuilder.append('/').append(mAssignedPrefixLength);
+        }
+        String message = messageBuilder.toString();
+        if (message.equals(mLastLoggedAssignedIp)) {
+            return;
+        }
+        if (IOUtils.appendLogTxt(cmd.logPath, message)) {
+            mLastLoggedAssignedIp = message;
+        }
     }
 
     @Override
@@ -129,6 +156,7 @@ public class N2NService extends VpnService {
         mFileObserver.stopWatching();
         IOUtils.clearLogTxt(cmd.logPath);
         mFileObserver.startWatching();
+        logAssignedIpIfPossible();
         try {
             if (!startEdge(cmd)) {
                 EventBus.getDefault().post(new ErrorEvent());
@@ -204,6 +232,9 @@ public class N2NService extends VpnService {
 
                         EventBus.getDefault().post(new StopEvent());
                         mStopInProgress = false;
+                        mAssignedIp = "";
+                        mAssignedPrefixLength = -1;
+                        mLastLoggedAssignedIp = "";
                         if(mFileObserver != null){
                             mFileObserver.stopWatching();  //清除日志文件会导致FileObserver失效，要先stop再start
                         }
@@ -288,6 +319,10 @@ public class N2NService extends VpnService {
 
     public EdgeStatus.RunningStatus getCurrentStatus() {
         return mCurrentStatus;
+    }
+
+    public String getAssignedIp() {
+        return mAssignedIp == null ? "" : mAssignedIp;
     }
 
     private static final int CMD_REMOVE_NOTIFICATION = 0;

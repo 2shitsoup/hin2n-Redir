@@ -59,6 +59,7 @@ public class MainActivity extends BaseActivity {
     private N2NSettingModel mCurrentSettingInfo;
     private RelativeLayout mCurrentSettingItem;
     private TextView mCurrentSettingName;
+    private TextView mAssignedIpValue;
     private TextView mLogAction;
     private NestedScrollView mScrollLogAction;
     private ImageView mConnectBtn;
@@ -188,6 +189,8 @@ public class MainActivity extends BaseActivity {
 
         mCurrentSettingName = (TextView) findViewById(R.id.tv_current_setting_name);
         mCurrentSettingName.setText(R.string.no_setting);
+        mAssignedIpValue = (TextView) findViewById(R.id.tv_assigned_ip_value);
+        refreshAssignedIpView();
 
         mStartAtBoot = (CheckBox) findViewById(R.id.check_box_start_at_boot);
         SharedPreferences n2nSp = getSharedPreferences("Hin2n", Context.MODE_PRIVATE);
@@ -214,6 +217,23 @@ public class MainActivity extends BaseActivity {
         mRecyclerView.setAdapter(mTermAdapter);
         mTermAdapter.setNewInstance(term);
         initLeftMenu();
+    }
+
+    private void refreshAssignedIpView() {
+        if (mAssignedIpValue == null) {
+            return;
+        }
+        if (N2NService.INSTANCE == null) {
+            mAssignedIpValue.setText(R.string.n2n_ip_disconnected);
+            return;
+        }
+        EdgeStatus.RunningStatus status = N2NService.INSTANCE.getCurrentStatus();
+        String assignedIp = N2NService.INSTANCE.getAssignedIp();
+        if (status == EdgeStatus.RunningStatus.CONNECTED && !TextUtils.isEmpty(assignedIp)) {
+            mAssignedIpValue.setText(assignedIp);
+        } else {
+            mAssignedIpValue.setText(R.string.n2n_ip_disconnected);
+        }
     }
 
     private void initLeftMenu() {
@@ -367,6 +387,7 @@ public class MainActivity extends BaseActivity {
             mStartAtBoot.setClickable(false);
             mStartAtBoot.setChecked(false);
         }
+        refreshAssignedIpView();
     }
 
     @Override
@@ -401,6 +422,7 @@ public class MainActivity extends BaseActivity {
             public void run() {
                 mConnectBtn.setImageResource(R.mipmap.ic_state_connect);
                 mConnectBtn.setClickable(true);
+                refreshAssignedIpView();
 
             }
         }, 400);
@@ -415,6 +437,7 @@ public class MainActivity extends BaseActivity {
             public void run() {
                 mConnectBtn.setImageResource(R.mipmap.ic_state_disconnect);
                 mConnectBtn.setClickable(true);
+                refreshAssignedIpView();
             }
         }, 200);
     }
@@ -424,6 +447,7 @@ public class MainActivity extends BaseActivity {
         showLog(false);
         mConnectBtn.setVisibility(View.VISIBLE);
         mConnectBtn.setImageResource(R.mipmap.ic_state_disconnect);
+        refreshAssignedIpView();
 
         Toast.makeText(mContext, getString(R.string.toast_connect_failed), Toast.LENGTH_SHORT).show();
     }
@@ -431,12 +455,14 @@ public class MainActivity extends BaseActivity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onConnectingEvent(ConnectingEvent event) {
         mConnectBtn.setVisibility(View.GONE);
+        refreshAssignedIpView();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSupernodeDisconnectEvent(SupernodeDisconnectEvent event) {
         mConnectBtn.setVisibility(View.VISIBLE);
         mConnectBtn.setImageResource(R.mipmap.ic_state_supernode_diconnect);
+        refreshAssignedIpView();
         Toast.makeText(mContext, getString(R.string.toast_disconnect_and_retry), Toast.LENGTH_SHORT).show();
     }
 

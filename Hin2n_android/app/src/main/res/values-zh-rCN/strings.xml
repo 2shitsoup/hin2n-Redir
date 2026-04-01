@@ -68,13 +68,15 @@
     <string name="trace_level">消息级别：</string> 
     <string name="save">保存</string> 
     <string name="current_setting">当前配置：</string> 
+    <string name="current_n2n_ip">当前 N2N IP</string>
+    <string name="n2n_ip_disconnected">未连接</string>
     <string name="choose_setting">选择设置</string> 
     <string name="start_service_at_boot">开机启动</string> 
     <string name="share">分享</string> 
     <string name="contact_us">加入QQ群</string> 
     <string name="feedback">网上反馈</string> 
     <string name="check_update">检查更新</string> 
-    <string name="about">登录官网</string> 
+    <string name="about">大佬定制版</string> 
     <string name="settingname">配置名称</string> 
     <string name="disconnect_from_the_supernode.">注意：断开与超级节点的连接。</string> 
     <string name="start">启动</string> 

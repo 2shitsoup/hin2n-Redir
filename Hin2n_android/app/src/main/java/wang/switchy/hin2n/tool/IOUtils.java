@@ -146,6 +146,29 @@ public class IOUtils {
         return false;
     }
 
+    public static boolean appendLogTxt(String txtPath, String text) {
+        File file = new File(txtPath);
+        FileOutputStream fileOutputStream = null;
+        OutputStreamWriter outputStreamWriter = null;
+        BufferedWriter bufferedWriter = null;
+        try {
+            fileOutputStream = new FileOutputStream(file, true);
+            outputStreamWriter = new OutputStreamWriter(fileOutputStream);
+            bufferedWriter = new BufferedWriter(outputStreamWriter);
+            bufferedWriter.write(text);
+            bufferedWriter.newLine();
+            bufferedWriter.flush();
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            close(bufferedWriter);
+            close(outputStreamWriter);
+            close(fileOutputStream);
+        }
+        return false;
+    }
+
     public static void close(Closeable closeable) {
         try {
             if (null != closeable) {
